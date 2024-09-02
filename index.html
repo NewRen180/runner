@@ -3,70 +3,89 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Vue.js 表格编辑示例</title>
+<title>跑步计划生成器</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vant@3/lib/index.css">
 </head>
 <body>
 <div id="app">
-  <table border="1">
-    <thead>
-      <tr>
-        <th>姓名</th>
-        <th>年龄</th>
-        <th>职业</th>
-        <th>操作</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr v-for="person in people" :key="person.id">
-        <td>
-          <!-- 判断是否处于编辑状态 -->
-          <span v-if="!person.editing">{{ person.name }}</span>
-          <input v-else type="text" v-model="person.name">
-        </td>
-        <td>
-          <span v-if="!person.editing">{{ person.age }}</span>
-          <input v-else type="number" v-model="person.age">
-        </td>
-        <td>
-          <span v-if="!person.editing">{{ person.job }}</span>
-          <input v-else type="text" v-model="person.job">
-        </td>
-        <td>
-          <!-- 编辑按钮 -->
-          <button v-if="!person.editing" @click="edit(person)">编辑</button>
-          <!-- 保存按钮 -->
-          <button v-else @click="save(person)">保存</button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+  <!-- 单选框选择跑步类型 -->
+  <van-radio-group v-model="runType">
+    <van-radio name="5公里">5公里</van-radio>
+    <van-radio name="10公里">10公里</van-radio>
+    <van-radio name="半马">半马</van-radio>
+    <van-radio name="全马">全马</van-radio>
+  </van-radio-group>
+
+  <!-- 完成时间选择器 -->
+  <van-field
+    v-model="completionTime"
+    label="完成时间"
+    placeholder="请选择时间"
+    readonly
+    clickable
+    @click="showPicker = true"
+  />
+
+  <!-- 周跑量输入框 -->
+  <van-field v-model="weeklyRun" label="周跑量" placeholder="请输入公里数" />
+
+  <!-- 跑步计划表格 -->
+  <van-table>
+    <van-thead>
+      <van-tr>
+        <van-th>周一</van-th>
+        <van-th>周二</van-th>
+        <van-th>周三</van-th>
+        <van-th>周四</van-th>
+        <van-th>周五</van-th>
+        <van-th>周六</van-th>
+        <van-th>周日</van-th>
+      </van-tr>
+    </van-thead>
+    <van-tbody>
+      <van-tr v-for="(week, index) in dailyPlans" :key="index">
+        <van-td v-for="(run, dayIndex) in week" :key="dayIndex">
+          {{ run }}
+        </van-td>
+      </van-tr>
+    </van-tbody>
+  </van-table>
 </div>
 
-<!-- 引入 Vue.js -->
-<script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vant@3/lib/vant.min.js"></script>
 <script>
-  var app = new Vue({
-    el: '#app',
-    data: {
-      people: [
-        { id: 1, name: '张三', age: 28, job: '工程师', editing: false },
-        { id: 2, name: '李四', age: 24, job: '设计师', editing: false },
-        { id: 3, name: '王五', age: 32, job: '产品经理', editing: false }
-      ]
+  const { createApp } = Vue;
+  createApp({
+    data() {
+      return {
+        runType: '',
+        completionTime: '',
+        weeklyRun: '',
+        dailyPlans: Array.from({ length: 4 }, () => Array(7).fill(0)),
+        showPicker: false
+      };
     },
     methods: {
-      edit: function(person) {
-        // 将编辑状态设置为 true
-        person.editing = true;
-      },
-      save: function(person) {
-        // 保存编辑后的数据，并将编辑状态设置为 false
-        person.editing = false;
-        // 这里可以添加发送数据到服务器的代码
-        console.log('保存数据:', person);
+      generatePlans() {
+        const totalWeeklyRun = parseFloat(this.weeklyRun);
+        for (let week = 0; week < 4; week++) {
+          for (let day = 0; day < 7; day++) {
+            const randomRun = Math.floor(Math.random() * totalWeeklyRun / 7) + 1; // 随机跑量
+            this.dailyPlans[week][day] = randomRun;
+          }
+        }
       }
+    },
+    watch: {
+      weeklyRun(newVal) {
+        this.generatePlans();
+      }
+    },
+    mounted() {
+      this.generatePlans();
     }
-  });
+  }).mount('#app');
 </script>
 </body>
 </html>
