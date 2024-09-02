@@ -3,64 +3,70 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>简单计算器</title>
-<style>
-  body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    background-color: #f4f4f4;
-  }
-  .calculator {
-    background: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-  }
-  input, button {
-    width: 100%;
-    padding: 10px;
-    margin-top: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-  }
-  button {
-    background-color: #007bff;
-    color: white;
-    border: none;
-    cursor: pointer;
-  }
-  button:hover {
-    background-color: #0056b3;
-  }
-  .output {
-    margin-top: 20px;
-    font-size: 24px;
-    font-weight: bold;
-  }
-</style>
+<title>Vue.js 表格编辑示例</title>
 </head>
 <body>
-
-<div class="calculator">
-  <input type="number" id="num1" placeholder="输入第一个数字">
-  <input type="number" id="num2" placeholder="输入第二个数字">
-  <button onclick="calculateSum()">计算和</button>
-  <div class="output" id="result">和: </div>
+<div id="app">
+  <table border="1">
+    <thead>
+      <tr>
+        <th>姓名</th>
+        <th>年龄</th>
+        <th>职业</th>
+        <th>操作</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr v-for="person in people" :key="person.id">
+        <td>
+          <!-- 判断是否处于编辑状态 -->
+          <span v-if="!person.editing">{{ person.name }}</span>
+          <input v-else type="text" v-model="person.name">
+        </td>
+        <td>
+          <span v-if="!person.editing">{{ person.age }}</span>
+          <input v-else type="number" v-model="person.age">
+        </td>
+        <td>
+          <span v-if="!person.editing">{{ person.job }}</span>
+          <input v-else type="text" v-model="person.job">
+        </td>
+        <td>
+          <!-- 编辑按钮 -->
+          <button v-if="!person.editing" @click="edit(person)">编辑</button>
+          <!-- 保存按钮 -->
+          <button v-else @click="save(person)">保存</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
 </div>
 
+<!-- 引入 Vue.js -->
+<script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
 <script>
-  function calculateSum() {
-    var num1 = document.getElementById('num1').value;
-    var num2 = document.getElementById('num2').value;
-    var sum = parseFloat(num1) + parseFloat(num2);
-    document.getElementById('result').innerText = '和: ' + sum;
-  }
+  var app = new Vue({
+    el: '#app',
+    data: {
+      people: [
+        { id: 1, name: '张三', age: 28, job: '工程师', editing: false },
+        { id: 2, name: '李四', age: 24, job: '设计师', editing: false },
+        { id: 3, name: '王五', age: 32, job: '产品经理', editing: false }
+      ]
+    },
+    methods: {
+      edit: function(person) {
+        // 将编辑状态设置为 true
+        person.editing = true;
+      },
+      save: function(person) {
+        // 保存编辑后的数据，并将编辑状态设置为 false
+        person.editing = false;
+        // 这里可以添加发送数据到服务器的代码
+        console.log('保存数据:', person);
+      }
+    }
+  });
 </script>
-
 </body>
 </html>
