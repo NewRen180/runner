@@ -119,9 +119,9 @@ function updatePredictions(vdot, radioValue, timeT) {
     `;
 	
 	equivalent = [
-		{key:'1', distance: '3KM', time:Formula.getEqual(vdot, 3000), pace:Formula.getEqualPace(vdot, 3000)} ,
-		{key:'2', distance: '5KM', time:Formula.getEqual(vdot, 5000, radioValue * 1000,timeT), pace:Formula.getEqualPace(vdot, 5000)} ,
-		{key:'3', distance: '10KM', time:Formula.getEqual(vdot, 10000, radioValue * 1000,timeT), pace:Formula.getEqualPace(vdot, 10000)},
+		{key:'1', distance: '3公里', time:Formula.getEqual(vdot, 3000), pace:Formula.getEqualPace(vdot, 3000)} ,
+		{key:'2', distance: '5公里', time:Formula.getEqual(vdot, 5000, radioValue * 1000,timeT), pace:Formula.getEqualPace(vdot, 5000)} ,
+		{key:'3', distance: '10公里', time:Formula.getEqual(vdot, 10000, radioValue * 1000,timeT), pace:Formula.getEqualPace(vdot, 10000)},
 		{key:'4', distance: '半马', time:Formula.getEqual(vdot, 21097.5, radioValue * 1000,timeT), pace:Formula.getEqualPace(vdot, 21097.5)},
 		{key:'5', distance: '全马', time:Formula.getEqual(vdot, 42195, radioValue * 1000,timeT), pace:Formula.getEqualPace(vdot, 42195)}
 	]
@@ -227,17 +227,20 @@ var Formula = {
     },
 
     _formatTime: function(time) {
-        var minutes = Math.floor(time);
-        var seconds = Math.round(((time - Math.floor(time)) * 60));
-        var strNum;
-        // 不满10补0
-        if (seconds < 10) {
-          strNum = '0' + seconds;
-        } else {
-          strNum = '' + seconds;
-        }
+		var minutes = Math.floor(time);
+		var seconds = Math.round(((time - Math.floor(time)) * 60));
 
-        return '' + minutes + ':' + strNum;
+		// 如果秒数超过59，增加分钟数并重置秒数
+		if (seconds >= 60) {
+			minutes += 1;
+			seconds = 0;
+		}
+
+		// 格式化分钟和秒数，确保秒数不满10时前面补0
+		var strMinutes = minutes.toString();
+		var strSeconds = seconds < 10 ? '0' + seconds : seconds.toString();
+
+		return strMinutes + ':' + strSeconds;
     },
 
     getMarathonPace: function(VDOT, trainingDistance) {
