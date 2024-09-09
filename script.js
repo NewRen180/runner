@@ -96,7 +96,7 @@ function updatePaces(vdot) {
 		{key:'2', type: '马拉松配速', pace :Formula.getPaces(vdot, 'M')},
 		{key:'3', type: '乳酸阈配速', pace :Formula.getPaces(vdot, 'T')},
 		{key:'4', type: '间歇跑配速', pace :Formula.getPaces(vdot, 'I')},
-		{key:'5', type: '全力跑配速1', pace :Formula.getPaces(vdot, 'R')},
+		{key:'5', type: '全力跑配速', pace :Formula.getPaces(vdot, 'R')},
 	];
 	console.log('get paces ' + Formula.getPaces(vdot, 'E'))
     paces.forEach(pace => {
