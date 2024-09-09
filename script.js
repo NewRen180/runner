@@ -56,16 +56,16 @@ function updateTrainingPlan(vdot, weeklyRun) {
         <tr>
             <th>Week</th>
             <th>周一</th>
-            <th>周二</th>
+            <th>周二(E)</th>
             <th>周三</th>
             <th>周四</th>
             <th>周五</th>
-            <th>周六</th>
-            <th>周日</th>
+            <th>周六(E)</th>
+            <th>周日(LSD)</th>
         </tr>
     `;
 	
-	listOfData = Formula.getPlanList(vdot, weeklyRun)
+	listOfData = Formula.getPlanListEasy(vdot, weeklyRun)
 	
     listOfData.forEach(week => {
         const row = `<tr>
@@ -479,6 +479,97 @@ var Formula = {
 			  day5: '' + T + '(' + Formula.getPaces(vdot, 'T') +')',
 			  day7: '' + ER + '(' + Formula.getPaces(vdot, 'E') +')',
 			  day6: '' + M + '(' + Formula.getPaces(vdot, 'M') +')'
+			}
+		 ];
+		 return allData;
+	},
+	getPlanListEasy: function(vdot, distance) {
+		var weekDistance = distance;
+		var Idistance = 1;  //I的距离为1000
+		var Rdistance = 0.5; //R的距离为500
+
+		// 算法 E配速 30%  M配置 20%  T配速 10%   I配速8%  R配速5%
+		// 一周5练   E(最大)/M/T/I(或R)/E（剩余）
+
+		var M = Math.ceil(weekDistance * 0.2); //向上取整
+		var T = Math.ceil(weekDistance * 0.1);
+		var E = Math.ceil(weekDistance * 0.3);
+		// 1000米  最多10公里
+		var I = (weekDistance * 0.08 <= 10 ? Math.ceil(weekDistance * 0.08) : 10);
+		// 400米  最多8公里
+		var R = (weekDistance * 0.05 <= 8 ? weekDistance * 0.05 : 8);
+
+		var EI = Math.ceil(weekDistance - (M + T + I + E)); //剩余的训练
+		var ER = Math.ceil(weekDistance - (M + T + R + E)); //剩余的训练
+
+		var EIT = E + EI
+		var EE = E;
+		// 周日长距离
+		if (EIT > 28 && EIT < 42) {
+		  EI = 21;
+		  E = EIT -21;
+		}
+		else if (EIT > 41) {
+		  E = 21;
+		  EI = EIT -21;		  	
+		}
+
+		// 轻松跑两次，一个半马 一次其他
+		var ERT = EE + ER
+
+		// 周日长距离
+		if (ERT > 28 && ERT < 42) {
+		  ER = 21;
+		  EE = ERT -21;
+		}
+		else if (ERT > 41) {
+		  EE = 21;
+		  ER = ERT -21;		
+		}
+
+		var allData = [{
+			  key: '1',
+			  week: '第一周',
+			  day2: '' + E + '(' + Formula.getPaces(vdot, 'E') +')',
+			  day1: '休息',
+			  day3: '' + I + '(' + Formula.getPaces(vdot, 'I') +')' + '\r\n 1000米 * ' + Math.ceil(I / Idistance),
+			  day4: '休息',
+			  day5: '' + T + '(' + Formula.getPaces(vdot, 'T') +')' ,
+			  day7: '' + EI + '(' + Formula.getPaces(vdot, 'E') +')',
+			  day6: '' + M + '(' + Formula.getPaces(vdot, 'E') +')'
+			},
+			{
+			  key: '2',
+			  week: '第二周',
+			  day2: '' + EE + '(' + Formula.getPaces(vdot, 'E') +')',
+			  day1: '休息',
+			  day3: '' + R + '(' + Formula.getPaces(vdot, 'R') +')' + '\n 500米 * ' + Math.ceil(R / Rdistance),
+			  day4: '休息',
+			  day5: '' + M + '(' + Formula.getPaces(vdot, 'M') +')',
+			  day7: '' + ER + '(' + Formula.getPaces(vdot, 'E') +')',
+			  day6: '' + T + '(' + Formula.getPaces(vdot, 'E') +')'
+			},
+			{
+			  key: '3',
+			  week: '第三周',
+			  day2: '' + E + '(' + Formula.getPaces(vdot, 'E') +')',
+			  day1: '休息',
+			  day3: '' + I + '(' + Formula.getPaces(vdot, 'I') +')' + '\n 1000米 * ' + Math.ceil(I / Idistance),
+			  day4: '休息',
+			  day5: '' + T + '(' + Formula.getPaces(vdot, 'T') +')',
+			  day7: '' + EI + '(' + Formula.getPaces(vdot, 'E') +')',
+			  day6: '' + M + '(' + Formula.getPaces(vdot, 'E') +')'
+			},
+			{
+			  key: '4',
+			  week: '第四周',
+			  day2: '' + EE + '(' + Formula.getPaces(vdot, 'E') +')',
+			  day1: '休息',
+			  day3: '' + R + '(' + Formula.getPaces(vdot, 'R') +')' + '\n 500米 * ' + Math.ceil(R / Rdistance),
+			  day4: '休息',
+			  day5: '' + M + '(' + Formula.getPaces(vdot, 'M') +')',
+			  day7: '' + ER + '(' + Formula.getPaces(vdot, 'E') +')',
+			  day6: '' + T + '(' + Formula.getPaces(vdot, 'E') +')'
 			}
 		 ];
 		 return allData;
