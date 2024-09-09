@@ -1,91 +1,172 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>跑步计划生成器</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vant@3/lib/index.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Running Plan</title>
+    <style>
+        body {
+            display: flex;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            font-family: Arial, sans-serif;
+        }
+        .sider {
+            flex: 0 0 350px; /* 增加宽度 */
+            background: #333; /* 深灰色背景 */
+            color: #fff; /* 白色字体 */
+            padding: 16px;
+            height: 100%;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1); /* 边框阴影 */
+        }
+        .card {
+            margin-bottom: 16px;
+            padding: 16px;
+            border-radius: 8px; /* 边框圆角 */
+        }
+        .content {
+            flex: 3;
+            padding: 16px;
+            overflow: auto;
+            background: #f9f9f9; /* 浅灰色背景 */
+            color: #333; /* 深灰色字体 */
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 16px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .table-container {
+            display: flex;
+            flex-direction: column;
+        }
+        .top-table {
+            flex: 1;
+        }
+        .bottom-tables {
+            flex: 1;
+            display: flex;
+            justify-content: space-between;
+        }
+        .bottom-tables div {
+            width: calc(50% - 8px);
+        }
+        /* 输入框和按钮样式 */
+        input[type="time"], select, button {
+            width: 100%;
+            padding: 8px;
+            margin-top: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 1em;
+            font-family: 'Arial', sans-serif; /* 增加字体族 */
+            color: #333; /* 增加字体颜色 */
+            background-color: #f8f8f8; /* 增加背景颜色 */
+            transition: border-color 0.3s, background-color 0.3s; /* 添加过渡效果 */
+        }
+        input[type="time"] {
+            width: calc(100% - 20px); /* 稍微减小宽度 */
+            font-size: 1em; /* 字体大小调整 */
+        }
+        button {
+            width: 100%; /* 宽度扩大 */
+            background-color: #5c67f2;
+            color: white;
+            cursor: pointer;
+            border: none;
+            margin-top: 12px; /* 按钮自行起一行 */
+        }
+        button:hover {
+            background-color: #4a54e1;
+        }
+        /* 加粗的文本样式 */
+        .bold-label {
+            font-weight: bold;
+        }
+        /* 跑力样式 */
+        #paoli {
+            font-size: 1.5em; /* 加大字体 */
+            padding: 4px 8px; /* 增加内边距 */
+            border: 2px solid #ff6347; /* 边框标注 */
+            border-radius: 4px; /* 边框圆角 */
+            color: #ff6347; /* 番茄色 */
+            font-weight: bold;
+            display: inline-block; /* 使其像块级元素一样显示 */
+            margin-top: 4px;
+        }
+        /* 分割线样式 */
+        .divider {
+            border-bottom: 1px solid #444;
+            margin: 10px 0;
+        }
+    </style>
 </head>
 <body>
-<div id="app">
-  <!-- 单选框选择跑步类型 -->
-  <van-radio-group v-model="runType">
-    <van-radio name="5公里">5公里</van-radio>
-    <van-radio name="10公里">10公里</van-radio>
-    <van-radio name="半马">半马</van-radio>
-    <van-radio name="全马">全马</van-radio>
-  </van-radio-group>
-
-  <!-- 完成时间选择器 -->
-  <van-field
-    v-model="completionTime"
-    label="完成时间"
-    placeholder="请选择时间"
-    readonly
-    clickable
-    @click="showPicker = true"
-  />
-
-  <!-- 周跑量输入框 -->
-  <van-field v-model="weeklyRun" label="周跑量" placeholder="请输入公里数" />
-
-  <!-- 跑步计划表格 -->
-  <van-table>
-    <van-thead>
-      <van-tr>
-        <van-th>周一</van-th>
-        <van-th>周二</van-th>
-        <van-th>周三</van-th>
-        <van-th>周四</van-th>
-        <van-th>周五</van-th>
-        <van-th>周六</van-th>
-        <van-th>周日</van-th>
-      </van-tr>
-    </van-thead>
-    <van-tbody>
-      <van-tr v-for="(week, index) in dailyPlans" :key="index">
-        <van-td v-for="(run, dayIndex) in week" :key="dayIndex">
-          {{ run }}
-        </van-td>
-      </van-tr>
-    </van-tbody>
-  </van-table>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/vant@3/lib/vant.min.js"></script>
-<script>
-  const { createApp } = Vue;
-  createApp({
-    data() {
-      return {
-        runType: '',
-        completionTime: '',
-        weeklyRun: '',
-        dailyPlans: Array.from({ length: 4 }, () => Array(7).fill(0)),
-        showPicker: false
-      };
-    },
-    methods: {
-      generatePlans() {
-        const totalWeeklyRun = parseFloat(this.weeklyRun);
-        for (let week = 0; week < 4; week++) {
-          for (let day = 0; day < 7; day++) {
-            const randomRun = Math.floor(Math.random() * totalWeeklyRun / 7) + 1; // 随机跑量
-            this.dailyPlans[week][day] = randomRun;
-          }
-        }
-      }
-    },
-    watch: {
-      weeklyRun(newVal) {
-        this.generatePlans();
-      }
-    },
-    mounted() {
-      this.generatePlans();
-    }
-  }).mount('#app');
-</script>
+    <div class="sider">
+        <div class="card">
+            <div class="bold-label">距离：</div>
+            <label><input type="radio" name="distance" value="5" checked> 5KM</label>
+            <label><input type="radio" name="distance" value="10"> 10KM</label>
+            <label><input type="radio" name="distance" value="21.0975"> 半马</label>
+            <label><input type="radio" name="distance" value="42.195"> 全马</label>
+            <div class="divider"></div> <!-- 分割线 -->
+            <div class="bold-label">用时：</div>
+            <input type="time" id="timePicker" step="1" value="00:20:00">
+            <div class="divider"></div> <!-- 分割线 -->
+            <div class="bold-label">周跑量：</div>
+            <select id="weeklyRun">
+                <option value="10">10KM</option>
+                <option value="20">20KM</option>
+                <option value="30">30KM</option>
+                <option value="40">40KM</option>
+                <option value="50" selected>50KM</option>
+                <option value="60">60KM</option>
+                <option value="70">70KM</option>
+                <option value="80">80KM</option>
+                <option value="100">100KM</option>
+            </select>
+            <div class="divider"></div> <!-- 分割线 -->
+            <button onclick="getPlan()">确定</button>
+            <div class="divider"></div> <!-- 分割线 -->
+        </div>
+        <div class="card">
+            <div class="bold-label">跑力：<span id="paoli">0</span></div>
+            <div class="divider"></div> <!-- 分割线 -->
+        </div>
+    </div>
+    <div class="content">
+        <div class="table-container">
+            <div class="top-table">
+                <h2>跑步训练计划</h2>
+                <table id="trainingPlanTable">
+                    <!-- 表格内容将通过JavaScript动态生成 -->
+                </table>
+            </div>
+            <div class="bottom-tables">
+                <div>
+                    <h2>跑步区间配速</h2>
+                    <table id="paceTable">
+                        <!-- 表格内容将通过JavaScript动态生成 -->
+                    </table>
+                </div>
+                <div>
+                    <h2>成绩预测</h2>
+                    <table id="predictionTable">
+                        <!-- 表格内容将通过JavaScript动态生成 -->
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="j.js"></script>
 </body>
 </html>
