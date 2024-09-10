@@ -15,22 +15,49 @@ async function processImage(file) {
     reader.onload = async function(event) {
         image.src = event.target.result;
         image.onload = async function() {
-            canvas.width = image.width;
-            canvas.height = image.height;
-            ctx.drawImage(image, 0, 0);
+            // Calculate the aspect ratio of the image
+            const aspectRatio = image.height / image.width;
+            
+            // Set the new canvas dimensions
+            const newWidth = 700;
+            const newHeight = newWidth * aspectRatio;
 
+            // Calculate scaling factors
+            const scaleX = newWidth / image.width;
+            const scaleY = newHeight / image.height;
+
+            // Set canvas size
+            canvas.width = newWidth;
+            canvas.height = newHeight;
+
+            // Draw the resized image on the canvas
+            ctx.drawImage(image, 0, 0, newWidth, newHeight);
+
+            // Load PoseNet model and estimate pose
             const net = await loadPosenet();
             const pose = await net.estimateSinglePose(image, {
                 flipHorizontal: false
             });
 
-            drawKeypoints(pose.keypoints, 0.5, ctx);
-            drawSkeleton(pose.keypoints, 0.5, ctx);
-            calculateAndDisplayAngles(pose.keypoints, ctx);
+            // Scale keypoints according to new canvas dimensions
+            const scaledKeypoints = pose.keypoints.map(keypoint => ({
+                ...keypoint,
+                position: {
+                    x: keypoint.position.x * scaleX,
+                    y: keypoint.position.y * scaleY
+                }
+            }));
+
+            // Draw keypoints, skeleton, and angles with scaled keypoints
+            drawKeypoints(scaledKeypoints, 0.5, ctx);
+            drawSkeleton(scaledKeypoints, 0.5, ctx);
+            calculateAndDisplayAngles(scaledKeypoints, ctx);
         };
     };
     reader.readAsDataURL(file);
 }
+
+
 
 // Calculate angle between three points
 function calculateAngle(p1, p2, p3) {
