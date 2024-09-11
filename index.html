@@ -1,15 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-ENB28PFPVB"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-    
-      gtag('config', 'G-ENB28PFPVB');
-    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Running Plan</title>
@@ -129,10 +120,11 @@
             <label><input type="radio" name="distance" value="42.195"> 全马</label>
             <div class="divider"></div> <!-- 分割线 -->
             <div class="bold-label">用时：</div>
-            <input type="time" id="timePicker" step="1" value="00:20:00">
+            <input type="time" id="timePicker" step="1" value="00:20:00" min="00:00:00" max="08:00:00">
             <div class="divider"></div> <!-- 分割线 -->
             <div class="bold-label">周跑量：</div>
             <select id="weeklyRun">
+                <option value="20">20KM</option>
                 <option value="30">30KM</option>
                 <option value="40">40KM</option>
                 <option value="50" selected>50KM</option>
@@ -141,14 +133,13 @@
             </select>
             <div class="divider"></div> <!-- 分割线 -->
             <button onclick="getPlan()">确定</button>
+			<div class="divider"></div> <!-- 分割线 -->
+            <button onclick="takeScreenshot()">截图并保存</button>
             <div class="divider"></div> <!-- 分割线 -->
         </div>
         <div class="card">
             <div class="bold-label">跑力：<span id="paoli">0</span></div>
             <div class="divider"></div> <!-- 分割线 -->
-        </div>
-        <div>
-            <a href="pose.html" target="_blank" style="font-weight: bold; color: white;">跑姿分析</a>
         </div>
     </div>
     <div class="content">
@@ -175,6 +166,7 @@
             </div>
         </div>
     </div>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="j.js"></script>
 </body>
 </html>
