@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>马拉松时刻计算器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 20px;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            max-width: 450px; /* 调整为原来的 60% */
+            margin-left: auto;
+            margin-right: auto;
+        }
+        h1 {
+            color: #4a90e2;
+        }
+        label {
+            display: block;
+            margin: 10px 0;
+        }
+        select, input[type="text"] {
+            margin: 5px 0;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            width: calc(100% - 22px);
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #4a90e2;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            width: 100%;
+            box-sizing: border-box;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #357ab8;
+        }
+        .result {
+            margin-top: 20px;
+            font-weight: bold;
+            background-color: #e7f3fe;
+            border: 1px solid #4a90e2;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        .highlight {
+            background-color: #ffd700; /* 金色高亮 */
+        }
+    </style>
+</head>
+<body>
+    <h1>马拉松时刻计算器</h1>
+    <label for="raceType">选择比赛类型：</label>
+    <select id="raceType">
+        <option value="full">全程马拉松（42.195公里）</option>
+        <option value="half">半程马拉松（21.0975公里）</option>
+    </select>
+    
+    <label for="finishTime">请输入目标完成时间（格式：时:分:秒 或 HHMM）：</label>
+    <input type="text" id="finishTime" placeholder="例如：4:30:00 或 130">
+    <button onclick="calculatePaces()">计算时刻</button>
+
+    <div id="result" class="result" style="display: none;">
+        <ul></ul>
+        <h2>终点：<span id="finishTimeDisplay"></span></h2>
+    </div>
+
+    <script>
+        function calculatePaces() {
+            const finishTimeInput = document.getElementById('finishTime').value.trim();
+            let totalSeconds = 0;
+
+            if (/^\d+:\d{2}:\d{2}$/.test(finishTimeInput)) {
+                const timeParts = finishTimeInput.split(':');
+                const hours = parseInt(timeParts[0]);
+                const minutes = parseInt(timeParts[1]);
+                const seconds = parseInt(timeParts[2]);
+                totalSeconds = hours * 3600 + minutes * 60 + seconds;
+            } else if (/^\d{3}$/.test(finishTimeInput)) {
+                const hours = parseInt(finishTimeInput.charAt(0));
+                const minutes = parseInt(finishTimeInput.slice(1));
+                totalSeconds = hours * 3600 + minutes * 60;
+            } else {
+                alert('请按照格式输入：时:分:秒 或 HHMM');
+                return;
+            }
+
+            const raceType = document.getElementById('raceType').value;
+            const totalDistance = raceType === 'full' ? 42.195 : 21.0975;
+
+            const kmTimeInSeconds = totalSeconds / totalDistance; // 每公里的时间（秒）
+
+            const resultList = document.querySelector('#result ul');
+            resultList.innerHTML = ''; // 清空之前的结果
+
+            for (let i = 1; i <= totalDistance; i++) {
+                const currentTimeInSeconds = kmTimeInSeconds * i;
+                const currentHours = Math.floor(currentTimeInSeconds / 3600);
+                const currentMinutes = Math.floor((currentTimeInSeconds % 3600) / 60);
+                const currentSeconds = Math.floor(currentTimeInSeconds % 60);
+
+                const formattedTime = `${String(currentHours).padStart(2, '0')}:${String(currentMinutes).padStart(2, '0')}:${String(currentSeconds).padStart(2, '0')}`;
+
+                if (i % 5 === 0) {
+                    resultList.innerHTML += `<li class="highlight">${i}公里: ${formattedTime}</li>`;
+                } else {
+                    resultList.innerHTML += `<li>${i}公里: ${formattedTime}</li>`;
+                }
+            }
+
+            // 显示终点时间
+            const finishHours = Math.floor(totalSeconds / 3600);
+            const finishMinutes = Math.floor((totalSeconds % 3600) / 60);
+            const finishSeconds = totalSeconds % 60;
+            document.getElementById('finishTimeDisplay').innerText = `${String(finishHours).padStart(2, '0')}:${String(finishMinutes).padStart(2, '0')}:${String(finishSeconds).padStart(2, '0')}`;
+            document.getElementById('result').style.display = 'block'; // 显示结果
+        }
+    </script>
+</body>
+</html>
