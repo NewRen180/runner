@@ -112,11 +112,18 @@
             font-size: 1em;
         }
         .links a {
-            color: #5c67f2; /* Link color */
+            color: #fff; /* White text color */
             text-decoration: none; /* Remove underline */
-            margin-right: 10px; /* Spacing between links */
+            display: block; /* Block display for new lines */
+            margin-bottom: 8px; /* Spacing between links */
+            background: #5c67f2; /* Link background */
+            padding: 6px 12px; /* Padding for better spacing */
+            border-radius: 4px; /* Rounded corners */
+            transition: background-color 0.3s, color 0.3s;
         }
         .links a:hover {
+            background-color: #4a54e1; /* Darker on hover */
+            color: #ffffff; /* Keep text color white */
             text-decoration: underline; /* Underline on hover */
         }
     </style>
@@ -153,8 +160,11 @@
         <div class="card">
             <div class="bold-label">跑力：<span id="paoli">0</span></div>
             <div class="divider"></div>
+            <div class="bold-label">跑步小工具：</div>
             <div class="links">
                 <a href="calc.html">跑步配速计算器</a>
+				<a href="MarathonTimetable.html">马拉松时刻表</a>
+				<a href="paoquan.html">400米操场配速转换</a>
                 <a href="pose.html">跑姿分析</a>
             </div>
             <div class="divider"></div>
