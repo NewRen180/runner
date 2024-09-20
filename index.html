@@ -7,7 +7,6 @@
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-
       gtag('config', 'G-ENB28PFPVB');
     </script>
     <meta charset="UTF-8">
@@ -22,24 +21,24 @@
             font-family: Arial, sans-serif;
         }
         .sider {
-            flex: 0 0 300px; /* 增加宽度 */
-            background: #333; /* 深灰色背景 */
-            color: #fff; /* 白色字体 */
+            flex: 0 0 300px; /* Increase width */
+            background: #333; /* Dark gray background */
+            color: #fff; /* White text */
             padding: 16px;
             height: 100%;
-            box-shadow: 2px 0 5px rgba(0,0,0,0.1); /* 边框阴影 */
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1); /* Box shadow */
         }
         .card {
             margin-bottom: 16px;
             padding: 16px;
-            border-radius: 8px; /* 边框圆角 */
+            border-radius: 8px; /* Rounded corners */
         }
         .content {
             flex: 3;
             padding: 16px;
             overflow: auto;
-            background: #f9f9f9; /* 浅灰色背景 */
-            color: #333; /* 深灰色字体 */
+            background: #f9f9f9; /* Light gray background */
+            color: #333; /* Dark gray text */
         }
         table {
             width: 100%;
@@ -69,7 +68,6 @@
         .bottom-tables div {
             width: calc(50% - 8px);
         }
-        /* 输入框和按钮样式 */
         input[type="time"], select, button {
             width: 100%;
             padding: 8px;
@@ -77,45 +75,49 @@
             border: 1px solid #ccc;
             border-radius: 4px;
             font-size: 1em;
-            font-family: 'Arial', sans-serif; /* 增加字体族 */
-            color: #333; /* 增加字体颜色 */
-            background-color: #f8f8f8; /* 增加背景颜色 */
-            transition: border-color 0.3s, background-color 0.3s; /* 添加过渡效果 */
-        }
-        input[type="time"] {
-            width: calc(100% - 20px); /* 稍微减小宽度 */
-            font-size: 1em; /* 字体大小调整 */
+            color: #333;
+            background-color: #f8f8f8;
+            transition: border-color 0.3s, background-color 0.3s;
         }
         button {
-            width: 100%; /* 宽度扩大 */
             background-color: #5c67f2;
             color: white;
             cursor: pointer;
             border: none;
-            margin-top: 12px; /* 按钮自行起一行 */
+            margin-top: 12px;
         }
         button:hover {
             background-color: #4a54e1;
         }
-        /* 加粗的文本样式 */
         .bold-label {
             font-weight: bold;
         }
-        /* 跑力样式 */
         #paoli {
-            font-size: 1.5em; /* 加大字体 */
-            padding: 4px 8px; /* 增加内边距 */
-            border: 2px solid #ff6347; /* 边框标注 */
-            border-radius: 4px; /* 边框圆角 */
-            color: #ff6347; /* 番茄色 */
+            font-size: 1.5em;
+            padding: 4px 8px;
+            border: 2px solid #ff6347;
+            border-radius: 4px;
+            color: #ff6347;
             font-weight: bold;
-            display: inline-block; /* 使其像块级元素一样显示 */
+            display: inline-block;
             margin-top: 4px;
         }
-        /* 分割线样式 */
         .divider {
             border-bottom: 1px solid #444;
             margin: 10px 0;
+        }
+        /* 超链接样式 */
+        .links {
+            margin-top: 10px;
+            font-size: 1em;
+        }
+        .links a {
+            color: #5c67f2; /* Link color */
+            text-decoration: none; /* Remove underline */
+            margin-right: 10px; /* Spacing between links */
+        }
+        .links a:hover {
+            text-decoration: underline; /* Underline on hover */
         }
     </style>
 </head>
@@ -123,14 +125,16 @@
     <div class="sider">
         <div class="card">
             <div class="bold-label">距离：</div>
-            <label><input type="radio" name="distance" value="5" checked> 5KM</label>
-            <label><input type="radio" name="distance" value="10"> 10KM</label>
-            <label><input type="radio" name="distance" value="21.0975"> 半马</label>
-            <label><input type="radio" name="distance" value="42.195"> 全马</label>
-            <div class="divider"></div> <!-- 分割线 -->
+            <select id="distance">
+                <option value="5" selected>5KM</option>
+                <option value="10">10KM</option>
+                <option value="21.0975">半马</option>
+                <option value="42.195">全马</option>
+            </select>
+            <div class="divider"></div>
             <div class="bold-label">用时：</div>
-            <input type="time" id="timePicker" step="1" value="00:20:00">
-            <div class="divider"></div> <!-- 分割线 -->
+            <input type="time" id="timePicker" step="1" value="00:20:00" min="00:00:01" max="08:00:00">
+            <div class="divider"></div>
             <div class="bold-label">周跑量：</div>
             <select id="weeklyRun">
                 <option value="20">20KM</option>
@@ -140,15 +144,20 @@
                 <option value="60">60KM</option>
                 <option value="70">70KM</option>
             </select>
-            <div class="divider"></div> <!-- 分割线 -->
+            <div class="divider"></div>
             <button onclick="getPlan()">确定</button>
-			<div class="divider"></div> <!-- 分割线 -->
+            <div class="divider"></div>
             <button onclick="takeScreenshot()">截图并保存</button>
-            <div class="divider"></div> <!-- 分割线 -->
+            <div class="divider"></div>
         </div>
         <div class="card">
             <div class="bold-label">跑力：<span id="paoli">0</span></div>
-            <div class="divider"></div> <!-- 分割线 -->
+            <div class="divider"></div>
+            <div class="links">
+                <a href="calc.html">跑步配速计算器</a>
+                <a href="pose.html">跑姿分析</a>
+            </div>
+            <div class="divider"></div>
         </div>
     </div>
     <div class="content">
@@ -156,26 +165,26 @@
             <div class="top-table">
                 <h2>跑步训练计划</h2>
                 <table id="trainingPlanTable">
-                    <!-- 表格内容将通过JavaScript动态生成 -->
+                    <!-- Dynamic content will be generated by JavaScript -->
                 </table>
             </div>
             <div class="bottom-tables">
                 <div>
                     <h2>跑步区间配速</h2>
                     <table id="paceTable">
-                        <!-- 表格内容将通过JavaScript动态生成 -->
+                        <!-- Dynamic content will be generated by JavaScript -->
                     </table>
                 </div>
                 <div>
                     <h2>成绩预测</h2>
                     <table id="predictionTable">
-                        <!-- 表格内容将通过JavaScript动态生成 -->
+                        <!-- Dynamic content will be generated by JavaScript -->
                     </table>
                 </div>
             </div>
         </div>
     </div>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="j.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
