@@ -42,6 +42,16 @@ function getPlan() {
     updatePredictions(vdot, radioValue, timeT);
 }
 
+function takeScreenshot() {
+	html2canvas(document.body).then(canvas => {
+		// Create a link element
+		const link = document.createElement('a');
+		link.href = canvas.toDataURL('image/png'); // Set the href to the data URL of the canvas
+		link.download = 'RunningPlan.png'; // Set the default file name for the download
+		link.click(); // Trigger the download
+	});
+}
+
 function calculateVDOT(distance, time) {
     return Formula.getVDOT(distance, time)
 }
@@ -505,26 +515,26 @@ var Formula = {
 		var EIT = E + EI
 		var EE = E;
 		// 周日长距离
-		if (EIT > 28 && EIT < 42) {
+		if (EIT > 28 && EIT < 36) {
 		  EI = 21;
-		  E = EIT -21;
+		  E = EIT -EI;
 		}
-		else if (EIT > 41) {
-		  E = 21;
-		  EI = EIT -21;		  	
+		else if (EIT > 36) {
+		  EI = 30;
+		  E = EIT -EI;	  	
 		}
 
 		// 轻松跑两次，一个半马 一次其他
 		var ERT = EE + ER
 
 		// 周日长距离
-		if (ERT > 28 && ERT < 42) {
+		if (ERT > 28 && ERT < 36) {
 		  ER = 21;
-		  EE = ERT -21;
+		  EE = ERT -ER;
 		}
-		else if (ERT > 41) {
-		  EE = 21;
-		  ER = ERT -21;		
+		else if (ERT > 36) {
+		  ER = 30;
+		  EE = ERT - ER;		
 		}
 
 		var allData = [{
