@@ -10,12 +10,8 @@ let paoli = '';
 let time = new Date(0, 0, 0, 0, 20, 0);
 
 function getPlan() {
-    const distanceElements = document.getElementsByName('distance');
-    for (let i = 0; i < distanceElements.length; i++) {
-        if (distanceElements[i].checked) {
-            radioValue = distanceElements[i].value;
-        }
-    }
+    const distanceElements = document.getElementById('distance');
+    radioValue = distanceElements.value;
 	
 	var timePicker = document.getElementById("timePicker");
 	var time1 = timePicker.value;
