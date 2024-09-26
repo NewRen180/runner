@@ -70,8 +70,8 @@
         <option value="3">3公里</option>
     </select>
     
-    <label for="time">时间 (时:分:秒):</label>
-    <input type="text" id="time" placeholder="例如 1:30:45" pattern="^[0-9]+:[0-5][0-9]:[0-5][0-9]$"><br>
+    <label for="time">时间 (时:分:秒 或 时分):</label>
+    <input type="text" id="time" placeholder="例如 1:30:45 或 130"><br>
     
     <button onclick="calculatePace()">计算配速</button>
     
@@ -88,13 +88,23 @@
             const selectedDistance = parseFloat(document.getElementById('distance').value);
             const timeInput = document.getElementById('time').value;
 
-            const timeParts = timeInput.split(':').map(Number);
-            if (timeParts.length !== 3 || timeParts.some(isNaN)) {
-                document.getElementById('result').innerText = '请输入有效的时间格式 (时:分:秒)';
-                return;
+            let hours = 0, minutes = 0, seconds = 0;
+
+            // 处理时分格式
+            if (timeInput.includes(':')) {
+				const timeParts = timeInput.split(':').map(Number);
+                if (timeParts.length !== 3 || timeParts.some(isNaN)) {
+                    document.getElementById('result').innerText = '请输入有效的时间格式 (时:分:秒 或 时分)';
+                    return;
+                }
+                [hours, minutes, seconds] = timeParts;
+            } else {
+			    const totalMinutes = parseInt(timeInput, 10);
+                hours = Math.floor(totalMinutes / 100);
+                minutes = totalMinutes % 100;
+                seconds = 0; // 默认秒为0
             }
 
-            const [hours, minutes, seconds] = timeParts;
             const totalMinutes = hours * 60 + minutes + seconds / 60;
 
             if (selectedDistance > 0 && totalMinutes > 0) {
