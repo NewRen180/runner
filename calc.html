@@ -110,7 +110,7 @@
         function calculateTime() {
             const paceInput = document.getElementById('pace').value;
             let paceMinutes, paceSeconds;
-
+            const selectedDistance = parseFloat(document.getElementById('distance').value);
             // 检查输入格式
             if (paceInput.includes(':')) {
                 const paceParts = paceInput.split(':').map(Number);
