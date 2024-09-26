@@ -128,9 +128,7 @@
                 paceMinutes = Math.floor(paceNum / 100);
                 paceSeconds = paceNum % 100;
             }
-
-            const selectedDistance = 42.195; // 使用全马距离
-
+            
             if (selectedDistance <= 0) {
                 document.getElementById('result').innerText = '请输入有效的配速和选择距离';
                 return;
