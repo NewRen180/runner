@@ -11,7 +11,8 @@ let time = new Date(0, 0, 0, 0, 20, 0);
 
 function getPlan() {
     const distanceElements = document.getElementById('distance');
-    radioValue = distanceElements.value;
+	
+	radioValue = distanceElements.value;
 	
 	var timePicker = document.getElementById("timePicker");
 	var time1 = timePicker.value;
@@ -37,6 +38,30 @@ function getPlan() {
     updatePaces(vdot);
     updatePredictions(vdot, radioValue, timeT);
 }
+
+function getPrediction() {
+    const distanceElements = document.getElementById('distance');
+	
+	radioValue = distanceElements.value;
+	
+	var timePicker = document.getElementById("timePicker");
+	var time1 = timePicker.value;
+
+	// 将时间字符串转换为分钟
+	var hours = parseInt(time1.split(':')[0], 10);
+	var minutes = parseInt(time1.split(':')[1], 10);
+	var seconds = parseInt(time1.split(':')[2], 10);
+	if (isNaN(seconds)) {seconds = 0}
+	var totalMinutes = hours * 60 + minutes + seconds / 60;
+
+    timeT = totalMinutes;
+
+    const vdot = calculateVDOT(radioValue * 1000, timeT);
+    updatePaoli(vdot.toFixed(1));
+
+    updatePredictions(vdot, radioValue, timeT);
+}
+
 
 function takeScreenshot() {
 	html2canvas(document.body).then(canvas => {
