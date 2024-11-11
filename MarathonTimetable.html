@@ -13,7 +13,7 @@
             padding: 20px;
             border-radius: 8px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            max-width: 450px; /* 调整为原来的 60% */
+            max-width: 450px;
             margin-left: auto;
             margin-right: auto;
         }
@@ -62,16 +62,25 @@
 </head>
 <body>
     <h1>马拉松时刻计算器</h1>
+
+    <!-- 选择比赛类型 -->
     <label for="raceType">选择比赛类型：</label>
     <select id="raceType">
         <option value="full">全程马拉松（42.195公里）</option>
         <option value="half">半程马拉松（21.0975公里）</option>
     </select>
     
+    <!-- 输入目标完成时间 -->
     <label for="finishTime">请输入目标完成时间（格式：时:分:秒 或 HHMM）：</label>
     <input type="text" id="finishTime" placeholder="例如：4:30:00 或 130">
+    
+    <!-- 输入多跑的距离 -->
+    <label for="extraDistance">请输入多跑的距离（单位：米）：</label>
+    <input type="text" id="extraDistance" placeholder="例如：500">
+
     <button onclick="calculatePaces()">计算时刻</button>
 
+    <!-- 显示结果 -->
     <div id="result" class="result" style="display: none;">
         <ul></ul>
         <h2>终点：<span id="finishTimeDisplay"></span></h2>
@@ -80,8 +89,10 @@
     <script>
         function calculatePaces() {
             const finishTimeInput = document.getElementById('finishTime').value.trim();
+            const extraDistanceInput = document.getElementById('extraDistance').value.trim();
             let totalSeconds = 0;
-
+            
+            // 解析目标完成时间
             if (/^\d+:\d{2}:\d{2}$/.test(finishTimeInput)) {
                 const timeParts = finishTimeInput.split(':');
                 const hours = parseInt(timeParts[0]);
@@ -97,14 +108,26 @@
                 return;
             }
 
+            // 解析多跑的距离
+            const extraDistance = parseInt(extraDistanceInput) || 0; // 默认值为0
+            if (isNaN(extraDistance)) {
+                alert('请输入有效的多跑距离');
+                return;
+            }
+
+            // 根据选择的比赛类型计算总距离（加上多跑的距离）
             const raceType = document.getElementById('raceType').value;
-            const totalDistance = raceType === 'full' ? 42.195 : 21.0975;
+            const baseDistance = raceType === 'full' ? 42.195 : 21.0975;
+            const totalDistance = baseDistance + extraDistance / 1000; // 追加的距离换算为公里
 
-            const kmTimeInSeconds = totalSeconds / totalDistance; // 每公里的时间（秒）
+            // 每公里的时间（秒）
+            const kmTimeInSeconds = totalSeconds / totalDistance;
 
+            // 清空之前的结果
             const resultList = document.querySelector('#result ul');
-            resultList.innerHTML = ''; // 清空之前的结果
+            resultList.innerHTML = '';
 
+            // 计算每公里的时间
             for (let i = 1; i <= totalDistance; i++) {
                 const currentTimeInSeconds = kmTimeInSeconds * i;
                 const currentHours = Math.floor(currentTimeInSeconds / 3600);
@@ -113,6 +136,7 @@
 
                 const formattedTime = `${String(currentHours).padStart(2, '0')}:${String(currentMinutes).padStart(2, '0')}:${String(currentSeconds).padStart(2, '0')}`;
 
+                // 每5公里高亮显示
                 if (i % 5 === 0) {
                     resultList.innerHTML += `<li class="highlight">${i}公里: ${formattedTime}</li>`;
                 } else {
