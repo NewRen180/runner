@@ -16,7 +16,6 @@
             width: 768px;
         }
 
-
         .name,
         .detail,
         .date,
@@ -86,6 +85,39 @@
             text-align: justify;
             height: 80px;
         }
+		
+	  .container {
+		max-width: 400px;
+		margin: 20px auto;
+		padding: 20px;
+		background-color: #fff;
+		box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+		border-radius: 8px;
+	  }
+
+	  input[type="text"] {
+		width: 100%;
+		padding: 10px;
+		margin-bottom: 10px;
+		border: 1px solid #ddd;
+		border-radius: 4px;
+		box-sizing: border-box; /* 使得padding不影响宽度 */
+	  }
+
+	  button {
+		width: 100%;
+		padding: 10px;
+		background-color: #5cb85c;
+		color: white;
+		border: none;
+		border-radius: 4px;
+		cursor: pointer;
+		font-size: 16px;
+	  }
+
+	  button:hover {
+		background-color: #4cae4c;
+	  }
     </style>
 </head>
 
@@ -97,7 +129,7 @@
 			<input id="result" type="text" placeholder="成绩" value="2:59:59">
 			<button id="printButton">打印证书</button>
 		</div>
-        <img src="./certificate-1.jpg"/>
+        <img src="./certificate-1.jpg" hidden>
     </div>
     <canvas id="seal" width="200" height="200" style="opacity: 0;"></canvas>
     <canvas id="preview" width="768" height="531"></canvas>
