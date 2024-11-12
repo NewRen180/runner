@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./assets/global.css">
+    <style>
+        .preview {
+            position: relative;
+            display: inline-block;
+        }
+
+        img {
+            width: 768px;
+        }
+
+
+        .name,
+        .detail,
+        .date,
+        .orgs,
+        .colon {
+            position: absolute;
+            font-family: "Microsoft YaHei"
+        }
+
+        .name {
+            top: 183px;
+            left: 102px;
+            width: 255px;
+            font-size: 27px;
+            line-height: 36px;
+            background-color: transparent;
+            border-bottom-width: 2px;
+            border-bottom-color: #999;
+            border-top-width: 0;
+            border-left-width: 0;
+            border-right-width: 0;
+            text-align: center;
+            outline: none;
+        }
+
+        .colon {
+            top: 190px;
+            left: calc(107px + 255px);
+            font-size: 27px;
+            font-family: Arial, Helvetica, sans-serif;
+            font-weight: bold;
+        }
+
+        .detail {
+            top: 237px;
+            left: 94px;
+            height: 90px;
+            width: 559px;
+            background-color: transparent;
+            resize: none;
+            border: none;
+            font-size: 22px;
+            letter-spacing: 4px;
+            outline: none;
+            text-indent: 50px;
+        }
+
+        .date {
+            top: 432px;
+            right: 130px;
+            font-size: 14px;
+            line-height: 36px;
+            background-color: transparent;
+            border: none;
+            outline: none;
+        }
+
+        .orgs {
+            top: 356px;
+            right: 147px;
+            width: 180px;
+            background-color: transparent;
+            resize: none;
+            border: none;
+            font-size: 14px;
+            outline: none;
+            text-align: justify;
+            height: 80px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="preview">
+		<div class="container">
+			<input id="name" type="text" placeholder="姓名" value="灰与飞起">
+			<input id="project" type="text" placeholder="马拉松项目" value="2024南京马拉松">
+			<input id="result" type="text" placeholder="成绩" value="2:59:59">
+			<button id="printButton">打印证书</button>
+		</div>
+        <img src="./assets/certificate-1.jpg"/>
+    </div>
+    <canvas id="seal" width="200" height="200" style="opacity: 0;"></canvas>
+    <canvas id="preview" width="768" height="531"></canvas>
+    <script>
+        let certificate = document.getElementsByTagName('img').item(0);
+
+        /**
+         * 印章的生成
+         */
+        function seal(s) {
+            // 防止转圈圈
+            if (!s) return;
+            let c = document.getElementById("seal");
+            let ctx = c.getContext("2d");
+            ctx.clearRect(0, 0, c.clientWidth, c.clientHeight);
+            ctx.fillStyle = "rgb(196,38,29)";
+            ctx.strokeStyle = "rgb(196,38,29)";
+            // 印章的外框
+            ctx.beginPath();
+            ctx.lineWidth = 4;
+            ctx.arc(100, 100, 96, 0, 2 * Math.PI);
+            ctx.stroke();
+            // 星星的生成
+            ctx.beginPath();
+            ctx.lineWidth = 1;
+            let star_start_x = 76;
+            let star_start_y = 88;
+            ctx.moveTo(star_start_x, star_start_y)
+            ctx.lineTo(star_start_x + 20, star_start_y)
+            ctx.lineTo(star_start_x + 20 + 7, star_start_y - 20)
+            ctx.lineTo(star_start_x + 20 + 7 + 6, star_start_y)
+            ctx.lineTo(star_start_x + 20 + 7 + 6 + 20, star_start_y)
+            ctx.lineTo(star_start_x + 20 + 7 + 6 + 20 - 16, star_start_y + 13)
+            ctx.lineTo(star_start_x + 20 + 7 + 6 + 20 - 16, star_start_y + 13)
+            ctx.lineTo(star_start_x + 20 + 7 + 6 + 20 - 16 + 5, star_start_y + 13 + 20)
+            ctx.lineTo(star_start_x + 20 + 7 + 6 + 20 - 16 + 5 - 16, star_start_y + 20)
+            ctx.lineTo(star_start_x + 20 + 7 + 6 + 20 - 16 + 5 - 16 - 18, star_start_y + 13 + 20)
+            ctx.lineTo(star_start_x + 20 + 7 + 6 + 20 - 16 + 5 - 16 - 18 + 6, star_start_y + 13)
+            ctx.closePath()
+            ctx.fill();
+            // 印章上旋转的文字
+            ctx.translate(100, 100);
+            ctx.font = '26px Helvetica';
+            let angle = 4 * Math.PI / (3 * (s.length - 1));
+            for (var i = 0; i < s.length; i++) {
+                let c = s[i];
+                if (i == 0) ctx.rotate(.8 * Math.PI);
+                else ctx.rotate(angle);
+                ctx.save();
+                ctx.translate(70, 0);
+                ctx.rotate(Math.PI / 2);
+                ctx.fillText(c, 0, 5);
+                ctx.restore();
+            }
+            // 归位
+            ctx.rotate(-angle * (s.length - 1));
+            ctx.rotate(-.8 * Math.PI);
+            ctx.translate(-100, -100);
+
+            return c.toDataURL()
+        }
+        // 预览
+        function preview(name, project, result, orgs, date) {
+            let c = document.getElementById("preview");
+            let ctx = c.getContext("2d");
+            console.log(certificate);
+            // 证书背景
+            ctx.drawImage(certificate, 0, 0, c.clientWidth, c.clientHeight);
+            console.log("certificate.onload");
+            // 获奖人
+            ctx.font = "26px Microsoft YaHei";
+            ctx.textAlign = "center";
+            ctx.textBaseline = "top";
+            ctx.fillText(name, 102 + 255 / 2, 183);
+            // 冒号
+            ctx.textAlign = "right";
+            ctx.fillText(":", 102 + 255, 183);
+            // 获奖人底线
+            ctx.beginPath();
+            ctx.moveTo(102, 220)
+            ctx.lineTo(102 + 245, 220)
+            ctx.stroke();
+
+            // 获奖成就
+            let detailX = 147;
+            let detailY = 237;
+
+            ctx.font = "22px Microsoft YaHei";
+            ctx.textAlign = "left";
+            ctx.textBaseline = "top";
+			detail="恭喜你在" + project + "中以" +result+ "成功PB，特发此证，以兹鼓励。希望在后面的赛事中，继续保持良好状态，顺其自然PB长虹！"
+            for (let i = 0; i < detail.length; i++) {
+                detailX += 32;
+                if (detailX > 640) {
+                    detailX = 115;
+                    detailY += 32;
+                }
+                ctx.fillText(detail[i], detailX, detailY);
+                if (detail.charCodeAt(i) <= 255) detailX -= 16
+            }
+
+            // 颁发机构 
+            let orgX = c.clientWidth - 147 - 160;
+            let orgY = 420
+
+            ctx.font = "14px Microsoft YaHei";
+            ctx.textAlign = "left";
+            ctx.textBaseline = "top";
+
+            let orgArr = orgs.split(/\n/).map(o => o.trim());
+
+            for (let i = 0; i < orgArr.length; i++) {
+                ctx.fillText(orgArr[i], orgX, orgY);
+                orgY += 30;
+
+                let img = new Image();
+                img.src = seal(orgArr[i]);
+                img.onload = function () {
+                    ctx.drawImage(img, c.clientWidth - 280 - i * 110, 370, 100, 100);
+                }
+            }
+            // 绘制获奖日期
+            ctx.font = "14px Microsoft YaHei";
+            ctx.textAlign = "left";
+            ctx.textBaseline = "top";
+            ctx.fillText(date, c.clientWidth - 130 - 153, 440);
+
+        }
+
+        let timeoutId = null;
+
+
+        // 示例
+        function sample() {
+            nameDom.value = `灰与飞起`;
+            detailDom.textContent = "恭喜你在2024南京马拉松项目中以02:59:59成功PB，特发此证，以兹鼓励。希望在后面的赛事中，继续保持良好状态，顺其自然PB长虹！";
+            orgsDom.textContent = `江豚湾湾九队训练营`
+            dateDom.value = "2024年11月12日"
+        }
+
+
+        let previewDom = document.getElementById("preview");
+        // 下载
+        function download() {
+            let a = document.createElement('a');
+            a.href = previewDom.toDataURL();
+            a.download = "荣誉证书.png";
+            a.click();
+        }
+
+        previewDom.addEventListener('click', this.download)
+
+
+        certificate.onload = function () {
+            sample();
+        }
+		
+		var printButton = document.getElementById('printButton');
+
+        // 为按钮添加点击事件监听器
+        printButton.addEventListener('click', function() {
+            // 获取输入框的值
+            var name = document.getElementById('name').value;
+            var project = document.getElementById('project').value;
+            var result = document.getElementById('result').value;
+
+            orgs = `江豚湾湾九队训练营`
+            date = "2024年11月12日"
+
+			preview(name, project, result, orgs, date)
+            // 在控制台中打印这些值
+            console.log('姓名:', name);
+            console.log('马拉松项目:', project);
+            console.log('成绩:', result);
+        });
+
+    </script>
+</body>
+
+</html>
